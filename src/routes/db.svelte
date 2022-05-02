@@ -29,7 +29,7 @@
 		.sort((a, b) => a.name.localeCompare(b.name));
 
 	$: selection = filterState
-		? queryResult.filter((row) => {
+		? options.filter((row) => {
 				return row.id == filterState;
 		  })
 		: ' - ';
@@ -37,8 +37,9 @@
 	$: keys = Object.keys(queryResult[0]);
 
 	$: continents = [...new Set(queryResult.map((row) => row.continent))]
-		.filter((continent) => continent != null)
+		// .filter((continent) => continent != null) // null implies NA
 		.sort();
+	// .map((val) => (val === null ? '-- NA --' : val));
 </script>
 
 <main>
@@ -56,10 +57,10 @@
 			<select bind:value={filterCont}>
 				<option value="">Select a Continent</option>
 				{#each continents as name, index}
-					<option value={name}>{name}</option>
+					<option value={name}>{name || '- NA -'}</option>
 				{/each}
 			</select>
-			{#if filterCont}
+			{#if filterCont || filterCont === null}
 				<select bind:value={filterState}>
 					<option value="">Select a Country</option>
 					{#each options as name}
@@ -69,7 +70,7 @@
 			{/if}
 		</form>
 
-		<p>There are {queryResult.length} entries.</p>
+		<p>There are {options.length} entries for {filterCont}.</p>
 		{#if filterState}
 			<p>filter - row.id: {filterState}</p>
 			<hr />
