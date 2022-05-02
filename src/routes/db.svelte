@@ -15,22 +15,30 @@
 
 	export let queryResult;
 
-	let filter; // TODO: move filter logic into query logic
+	let filterCont;
+	let filterState; // TODO: move filter logic into query logic
 
 	$: options = queryResult
 		/** redudant */
 		// ?.map((entry) => {
 		// 	return { id: entry.id, name: entry.name };
 		// })
+		.filter((entry) => {
+			return entry.continent === filterCont;
+		})
 		.sort((a, b) => a.name.localeCompare(b.name));
 
-	$: selection = filter
+	$: selection = filterState
 		? queryResult.filter((row) => {
-				return row.id == filter;
+				return row.id == filterState;
 		  })
 		: ' - ';
 
 	$: keys = Object.keys(queryResult[0]);
+
+	$: continents = [...new Set(queryResult.map((row) => row.continent))]
+		.filter((continent) => continent != null)
+		.sort();
 </script>
 
 <main>
@@ -43,18 +51,27 @@
 		</nav>
 	{/if} -->
 	{#if queryResult}
+		<blockquote>{continents}</blockquote>
 		<form>
-			<select bind:value={filter}>
-				<option value="">Select a selection</option>
-				{#each options as name}
-					<option value={name.id}>{name.name}</option>
+			<select bind:value={filterCont}>
+				<option value="">Select a Continent</option>
+				{#each continents as name, index}
+					<option value={name}>{name}</option>
 				{/each}
 			</select>
+			{#if filterCont}
+				<select bind:value={filterState}>
+					<option value="">Select a Country</option>
+					{#each options as name}
+						<option value={name.id}>{name.name}</option>
+					{/each}
+				</select>
+			{/if}
 		</form>
 
 		<p>There are {queryResult.length} entries.</p>
-		{#if filter}
-			<p>filter - row.id: {filter}</p>
+		{#if filterState}
+			<p>filter - row.id: {filterState}</p>
 			<hr />
 			<table>
 				<thead>
