@@ -1,4 +1,5 @@
 <script context="module">
+	export const prerender = false;
 	import * as db from '$lib/db';
 
 	export async function load() {
@@ -10,8 +11,10 @@
 	}
 </script>
 
-<script type="ts">
+<script>
 	// import { user, auth } from '$lib/db';
+
+	import { fade } from 'svelte/transition';
 
 	export let queryResult;
 
@@ -49,6 +52,7 @@
 
 	// let data = queryResult;
 	import data from '$lib/data/data.json';
+	// import { fade } from 'svelte/transition';
 
 	console.log(data);
 	const xKey = 'category';
@@ -84,16 +88,16 @@
 		</nav>
 	{/if} -->
 	{#if queryResult}
-		<blockquote>{continents}</blockquote>
-		<form>
-			<select bind:value={filterCont}>
+		<blockquote transition:fade>{continents}</blockquote>
+		<form transition:fade>
+			<select bind:value={filterCont} transition:fade>
 				<option value="">Select a Continent</option>
 				{#each continents as name, index}
 					<option value={name}>{name || '- NA -'}</option>
 				{/each}
 			</select>
 			{#if filterCont || filterCont === null}
-				<select bind:value={filterState}>
+				<select bind:value={filterState} transition:fade>
 					<option value="">Select a Country</option>
 					{#each options as name}
 						<option value={name.id}>{name.name}</option>
@@ -104,13 +108,13 @@
 
 		<p>There are {options.length} entries for {filterCont}.</p>
 		{#if filterState}
-			<p>filter - row.id: {filterState}</p>
+			<p transition:fade>filter - row.id: {filterState}</p>
 			<hr />
 			<table>
 				<thead>
 					<tr>
 						{#each keys as label}
-							<th>{label}</th>
+							<th transition:fade>{label}</th>
 						{/each}
 					</tr>
 				</thead>
@@ -118,7 +122,7 @@
 					{#each selection as row}
 						<tr>
 							{#each keys as label}
-								<td>{row[label]}</td>
+								<td transition:fade>{row[label]}</td>
 							{/each}
 						</tr>
 					{/each}
@@ -137,7 +141,7 @@
 			<label><input type="radio" bind:group={groupBy} value="false" />Clump together</label>
 		</div>
 
-		<div class="chart-container">
+		<div class="chart-container" transition:fade>
 			<LayerCake
 				{data}
 				x={xKey}
