@@ -50,14 +50,12 @@
 
 	import ForceLayout from '$lib/components/CirclePackForce.svelte';
 
-	// let data = queryResult;
-	import data from '$lib/data/data.json';
-	// import { fade } from 'svelte/transition';
+	let data = queryResult.filter((entry) => entry.continent !== null);
+	// import data from '$lib/data/data.json';
 
-	console.log(data);
-	const xKey = 'category';
-	const rKey = 'value';
-	const zKey = 'category';
+	const xKey = 'continent';
+	const rKey = 'id';
+	const zKey = 'continent';
 
 	let groupBy = 'true';
 
@@ -68,14 +66,15 @@
 		seriesNameSet.add(d[zKey]);
 	});
 
+	// $: dataSubset = filterCont ? data.filter((d) => d[zKey] === filterCont) : data;
+
 	// /* --------------------------------------------
 	//  * Convert this to an array so we can use it in our scales
 	//  */
 	const seriesNames = [...seriesNameSet].sort().filter((x) => x != null);
-	console.dir(seriesNames);
 
 	let manyBodyStrength = 3;
-	let xStrength = 0.1;
+	let xStrength = 0.3;
 </script>
 
 <section>
@@ -88,6 +87,7 @@
 		</nav>
 	{/if} -->
 	{#if queryResult}
+		filterCont: {filterCont}
 		<blockquote transition:fade>{continents}</blockquote>
 		<form transition:fade>
 			<select bind:value={filterCont} transition:fade>
@@ -128,14 +128,15 @@
 					{/each}
 				</tbody>
 			</table>
-			<p>Keys: {Object.keys(queryResult[0])}</p>
+			<!-- <p>Keys: {Object.keys(queryResult[0])}</p> -->
 		{/if}
 	{/if}
 
 	<hr />
 
 	{#if data}
-		{data.length}
+		<p>Length: {data.length}</p>
+		<p>{Object.entries(data[0])}</p>
 		<div class="input-container">
 			<label><input type="radio" bind:group={groupBy} value="true" />Group by category</label>
 			<label><input type="radio" bind:group={groupBy} value="false" />Clump together</label>
